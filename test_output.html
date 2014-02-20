@@ -1,0 +1,1798 @@
+<h1>Table of Contents</h1>
+<a href="#creating-users">Creating users</a><br/>
+<a href="#password-reset">Resetting passwords</a><br/>
+<a href="#idea-info">Getting info on individual ideas</a><br/>
+<a href="#getting-tags">Getting tags</a><br/>
+<a href="#logging-in">Logging in</a><br/>
+<a href="#changing-password">Changing password</a><br/>
+<a href="#user-profiles">User profiles</a><br/>
+<a href="#adding-ideas">Adding ideas</a><br/>
+<a href="#adding-comments">Adding comments</a><br/>
+<a href="#tagging-rating">Tagging and rating</a><br/>
+<a href="#logging-out">Logging out</a><br/>
+<a href="#more-ratings">More ratings</a><br/>
+<a href="#creating-discussions">Creating discussions</a><br/>
+<a href="#listing-discussions">Listing discussions</a><br/>
+<a href="#searching-ideas">Listing/searching ideas</a><br/>
+
+<hr/><h1 id="creating-users">Creating users</h1><h2>creating a couple of users</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess
+            [password] => 12345
+            [email] => jess@example.com
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Bob
+            [password] => 12345
+            [email] => bob@example.com
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Creating a user with a blank password</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess2
+            [password] => 
+            [email] => jess@delib.net
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => Please provide a password of at least five characters
+            [data] => 
+        )
+
+)
+</pre><h2>Creating a user that already exists</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess
+            [password] => 12345
+            [email] => jess@delib.net
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => The login name you selected is already in use or is not valid. Please choose another.
+            [data] => 
+        )
+
+)
+</pre><h2>Creating a user with a blank username</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => 
+            [password] => 12345
+            [email] => jess@delib.net
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => The portal is configured to use username that is not email so you need to pass a username.
+            [data] => 
+        )
+
+)
+</pre><h2>Creating a user with a blank email</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess3
+            [password] => 12345
+            [email] => 
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => You need to pass the new user's email.
+            [data] => 
+        )
+
+)
+</pre><hr/><h1 id="password-reset">Resetting passwords</h1><h2>Requesting a password reset token</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/reset
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [token] => ba93e0f2e0e1d16382f3f3f2337dd746
+            [expiry] => 2014-02-27T17:31:34+00:00
+        )
+
+)
+</pre><h2>Using the password reset token</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/reset/consume
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess
+            [token] => ba93e0f2e0e1d16382f3f3f2337dd746
+            [password] => something
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Trying to reuse the password reset token</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/reset/consume
+    [method] => POST
+    [data] => Array
+        (
+            [username] => Jess
+            [token] => ba93e0f2e0e1d16382f3f3f2337dd746
+            [password] => something
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => Invalid or expired token
+            [data] => 
+        )
+
+)
+</pre><h2>Requesting a password reset token for a non-existant user</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/reset
+    [method] => POST
+    [data] => Array
+        (
+            [username] => ZZZ
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => User not found
+            [data] => 
+        )
+
+)
+</pre><h2>Attempting to change (as opposed to reset) password when not logged in</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/change
+    [method] => POST
+    [data] => Array
+        (
+            [current] => something
+            [new] => something_new
+        )
+
+    [response status] => 403
+    [response body] => stdClass Object
+        (
+            [message] => Unauthorized
+        )
+
+)
+</pre><hr/><h1 id="idea-info">Getting info on individual ideas</h1><h2>Getting idea info</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/it-worked?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [ratings] => 0
+            [state] => new
+            [tags] => Array
+                (
+                    [0] => demo
+                )
+
+            [comments] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [body] => a comment
+                            [state] => new
+                            [created] => 2014-02-20T11:32:12.257094
+                            [id] => 1392895932257108
+                            [author] => admin
+                        )
+
+                )
+
+            [created] => 2013-11-04T17:42:04+00:00
+            [title] => Great - it's working!
+            [what] => <p>This idea is created automatically when you create a Dialogue App - if you can see this idea,
+it means everything went smoothly and you're up and running.</p>
+
+<p>There are all sorts of exciting things you can do now to get your Dialogue App set up just as you'd like it:</p>
+
+<ul>
+<li><a href="front-page/edit">customise your introductory text</a></li>
+<li><a href="about_the_dialogue/edit">write some background/'about' information</a></li>
+<li>familiarise yourself with the ideas functions below - try rating, tagging, commenting on or moderating this idea</li>
+<li><a href="++add++opsuite.discussion.idea">add some test ideas of your own</a></li>
+<li>review and, if necessary, <a href="page_list">amend</a> the <a href="privacy_policy">privacy</a> and <a href="moderation_policy">moderation</a> policies</li>
+<li>check out the various reporting dashboards</li>
+</ul>
+
+<p>If there's anything else you want help with, or if you're interested at any point in customising your Dialogue App
+further, <a href="http://www.dialogue-app.com/info/contact">get in touch with us</a>.</p>
+
+            [average_rating] => 0
+            [why] => <p>Hopefully, it helps you make the most of your Dialogue App! And we're happy when you're happy...</p>
+        )
+
+)
+</pre><h2>Getting idea info for a non-existant idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/non-existant?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Getting idea info for a non-existant discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/non/ideas/non-existant?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><hr/><h1 id="getting-tags">Getting tags</h1><h2>Getting tags for site</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/tags?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [honey] => 1
+            [demo] => 1
+            [bees] => 1
+            [bananas] => 1
+        )
+
+)
+</pre><h2>Getting tags for discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/tags?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [honey] => 1
+            [demo] => 1
+            [bees] => 1
+            [bananas] => 1
+        )
+
+)
+</pre><h2>Getting tags for non-existant discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/hhh/tags?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Getting tags for blank discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions//tags?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><hr/><h1 id="logging-in">Logging in</h1><h2>Logging in user Jess with wrong password</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/login
+    [method] => POST
+    [data] => Array
+        (
+            [__ac_name] => Jess
+            [__ac_password] => hhh
+        )
+
+    [response status] => 400
+    [response body] => HTTP/1.1 100 Continue
+
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain; charset=utf-8
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:34 GMT
+Content-Length: 48
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:34 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+{"message": "Invalid credentials", "data": null}
+)
+</pre><h2>Logging in non-existant user</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/login
+    [method] => POST
+    [data] => Array
+        (
+            [__ac_name] => aaa
+            [__ac_password] => hhh
+        )
+
+    [response status] => 400
+    [response body] => HTTP/1.1 100 Continue
+
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain; charset=utf-8
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:34 GMT
+Content-Length: 48
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:34 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+{"message": "Invalid credentials", "data": null}
+)
+</pre><h2>Logging in user Jess</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/login
+    [method] => POST
+    [data] => Array
+        (
+            [__ac_name] => Jess
+            [__ac_password] => something
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="SxIhaGb2/S1X4P4RGvhp/g1ozcbGHa%2BJJsQfktR1/lc1MzA2M2JmNkplc3Mh"; Path=/; HTTPOnly
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:34 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:34 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><hr/><h1 id="changing-password">Changing password</h1><h2>Changing a password with the wrong old password</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/change
+    [method] => POST
+    [data] => Array
+        (
+            [current] => wrong
+            [new] => something_new
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => Incorrect password
+            [data] => 
+        )
+
+)
+</pre><h2>Changing a password if you know the old password</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/change
+    [method] => POST
+    [data] => Array
+        (
+            [current] => something
+            [new] => something_new
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Changing it back again</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/password/change
+    [method] => POST
+    [data] => Array
+        (
+            [current] => something_new
+            [new] => something
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><hr/><h1 id="user-profiles">User profiles</h1><h2>Find out who I am logged in as</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/authenticated?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => Jess
+)
+</pre><h2>Getting my own user profile</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Jess?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 503
+    [response body] => stdClass Object
+        (
+            [message] => Internal server error
+        )
+
+)
+</pre><h2>Getting somebody else's user profile</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Bob?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [properties] => stdClass Object
+                (
+                    [email] => bob@example.com
+                )
+
+            [comments] => Array
+                (
+                )
+
+            [ideas] => Array
+                (
+                )
+
+        )
+
+)
+</pre><h2>Getting a non-existant user's profile</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/zzz?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><hr/><h1 id="adding-ideas">Adding ideas</h1><h2>Adding an idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas
+    [method] => POST
+    [data] => Array
+        (
+            [title] => Jess's idea
+            [what] => This is what the idea is
+            [why] => This is why it's important
+        )
+
+    [response status] => 200
+    [response body] => jesss-idea-2
+)
+</pre><h2>Adding an idea to an invalid discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/zzz
+    [method] => POST
+    [data] => Array
+        (
+            [title] => Jess's idea
+            [what] => This is what the idea is
+            [why] => This is why it's important
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Adding an idea with a missing Title</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas
+    [method] => POST
+    [data] => Array
+        (
+            [title] => 
+            [what] => This is what the idea is
+            [why] => This is why it's important
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => title is required
+            [data] => 
+        )
+
+)
+</pre><h2>Adding an idea with a missing description</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas
+    [method] => POST
+    [data] => Array
+        (
+            [title] => Jess's idea
+            [what] => 
+            [why] => This is why it's important
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => what is required
+            [data] => 
+        )
+
+)
+</pre><h2>Adding an idea with a missing 'why'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas
+    [method] => POST
+    [data] => Array
+        (
+            [title] => Jess's idea
+            [what] => This is what the idea is
+            [why] => 
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => why is required
+            [data] => 
+        )
+
+)
+</pre><hr/><h1 id="adding-comments">Adding comments</h1><h2>Adding comments to my idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/comments
+    [method] => POST
+    [data] => Array
+        (
+            [body] => I like bees
+        )
+
+    [response status] => 200
+    [response body] => 1392917494827529
+)
+</pre><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/comments
+    [method] => POST
+    [data] => Array
+        (
+            [body] => I don't like spiders
+        )
+
+    [response status] => 200
+    [response body] => 1392917494942683
+)
+</pre><h2>Adding comments to a non-existant idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/zzz/comments
+    [method] => POST
+    [data] => Array
+        (
+            [body] => I like bees
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Adding comments to a non-existant discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/hhh/ideas/zzz/comments
+    [method] => POST
+    [data] => Array
+        (
+            [body] => I like bees
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Adding a blank comment</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/comments
+    [method] => POST
+    [data] => Array
+        (
+            [body] => 
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => A comment body is required
+            [data] => 
+        )
+
+)
+</pre><hr/><h1 id="tagging-rating">Tagging and rating</h1><h2>Adding tags to my idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/tags
+    [method] => POST
+    [data] => Array
+        (
+            [tags] => bees, honey, bananas
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => bees
+            [1] => honey
+            [2] => bananas
+        )
+
+)
+</pre><h2>Attempting to add rating to my own idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/ratings
+    [method] => POST
+    [data] => Array
+        (
+            [rating] => 5
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => You can't rate your own ideas
+            [data] => 
+        )
+
+)
+</pre><hr/><h1 id="logging-out">Logging out</h1><h2>Logging out</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/logout
+    [method] => POST
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="deleted"; Path=/; Expires=Wed, 31-Dec-97 23:59:59 GMT; Max-Age=0
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:35 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:35 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><h2>Show that I'm not logged in as anyone anymore</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/authenticated?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Attempting to add an idea after logging out</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas
+    [method] => POST
+    [data] => Array
+        (
+            [title] => Jess's idea
+            [what] => This is what the idea is
+            [why] => This is why it's important
+        )
+
+    [response status] => 403
+    [response body] => stdClass Object
+        (
+            [message] => Unauthorized
+        )
+
+)
+</pre><hr/><h1 id="more-ratings">More ratings</h1><h2>Logging in user Bob</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/login
+    [method] => POST
+    [data] => Array
+        (
+            [__ac_name] => Bob
+            [__ac_password] => 12345
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="CSI8cnX7cLIgbo7qs8ca3Pvk3Ic4mYJ6nqtjC1ftCnk1MzA2M2JmN0JvYiE%3D"; Path=/; HTTPOnly
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:35 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:35 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><h2>Getting my own user profile</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Bob?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [properties] => stdClass Object
+                (
+                    [email] => bob@example.com
+                )
+
+            [comments] => Array
+                (
+                )
+
+            [ideas] => Array
+                (
+                )
+
+        )
+
+)
+</pre><h2>Getting somebody else's user profile</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Jess?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 503
+    [response body] => stdClass Object
+        (
+            [message] => Internal server error
+        )
+
+)
+</pre><h2>Attempting to rate Jess's idea with something invalid</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/ratings
+    [method] => POST
+    [data] => Array
+        (
+            [rating] => cheese
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => Invalid value
+            [data] => 
+        )
+
+)
+</pre><h2>Rating Jess's idea</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/ratings
+    [method] => POST
+    [data] => Array
+        (
+            [rating] => 2
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Clearing my rating</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/ratings
+    [method] => POST
+    [data] => Array
+        (
+            [rating] => 
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Changing my rating (this time using a string instead of an int)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/ideas/jesss-idea/ratings
+    [method] => POST
+    [data] => Array
+        (
+            [rating] => 3
+        )
+
+    [response status] => 200
+    [response body] => 
+)
+</pre><h2>Attempting to create a discussion (not allowed)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions
+    [method] => POST
+    [data] => Array
+        (
+            [title] => new-discussion
+            [summary] => summary
+            [body] => body
+        )
+
+    [response status] => 403
+    [response body] => stdClass Object
+        (
+            [message] => Unauthorized
+        )
+
+)
+</pre><h2>Logging out</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/logout
+    [method] => POST
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="deleted"; Path=/; Expires=Wed, 31-Dec-97 23:59:59 GMT; Max-Age=0
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:35 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:35 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><hr/><h1 id="creating-discussions">Creating discussions</h1><h2>Logging in user admin</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/login
+    [method] => POST
+    [data] => Array
+        (
+            [__ac_name] => admin
+            [__ac_password] => admin
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 100 Continue
+
+HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="NjE2NDZkNjk2ZTo2MTY0NmQ2OTZl"; Path=/
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:35 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:35 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><h2>Creating a discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions
+    [method] => POST
+    [data] => Array
+        (
+            [title] => new-discussion
+            [summary] => summary
+            [body] => body
+        )
+
+    [response status] => 200
+    [response body] => new-discussion
+)
+</pre><h2>Creating a discussion with blank title</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions
+    [method] => POST
+    [data] => Array
+        (
+            [title] => 
+            [summary] => summary
+            [body] => body
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => title may not be blank
+            [data] => 
+        )
+
+)
+</pre><h2>Creating a discussion with blank summary</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions
+    [method] => POST
+    [data] => Array
+        (
+            [title] => new-discussion
+            [summary] => 
+            [body] => body
+        )
+
+    [response status] => 200
+    [response body] => new-discussion-1
+)
+</pre><h2>Creating a discussion with blank body</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions
+    [method] => POST
+    [data] => Array
+        (
+            [title] => new-discussion
+            [summary] => summary
+            [body] => 
+        )
+
+    [response status] => 400
+    [response body] => stdClass Object
+        (
+            [message] => body may not be blank
+            [data] => 
+        )
+
+)
+</pre><h2>Logging out</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/users/logout
+    [method] => POST
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => HTTP/1.1 200 OK
+Content-Type: text/plain; charset=utf-8
+Set-Cookie: __ac="deleted"; Path=/; Expires=Wed, 31-Dec-97 23:59:59 GMT; Max-Age=0
+X-Varnish-Action: FETCH (pass - special case)
+Cache-Control: private
+Expires: Thu, 20 Feb 2014 17:31:35 GMT
+Content-Length: 4
+Accept-Ranges: bytes
+Date: Thu, 20 Feb 2014 17:31:35 GMT
+Via: 1.1 varnish
+Connection: keep-alive
+Server: Varnish
+X-Varnish-Age: 0
+Age: 0
+
+null
+)
+</pre><hr/><h1 id="listing-discussions">Listing discussions</h1><h2>Listing discussions</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [body] => body
+                    [summary] => summary
+                    [id] => new-discussion
+                    [title] => new-discussion
+                )
+
+            [1] => stdClass Object
+                (
+                    [body] => body
+                    [summary] => 
+                    [id] => new-discussion-1
+                    [title] => new-discussion
+                )
+
+            [2] => stdClass Object
+                (
+                    [body] => 
+                    [summary] => 
+                    [id] => ideas
+                    [title] => Ideas
+                )
+
+        )
+
+)
+</pre><h2>Getting info about 'ideas' discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 200
+    [response body] => stdClass Object
+        (
+            [body] => 
+            [summary] => 
+            [id] => ideas
+            [title] => Ideas
+        )
+
+)
+</pre><h2>Getting info about private discussion xzifqoawlz</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/xzifqoawlz?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><h2>Getting info about non-existant discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/fff?
+    [method] => GET
+    [data] => Array
+        (
+        )
+
+    [response status] => 404
+    [response body] => stdClass Object
+        (
+            [message] => Not found
+        )
+
+)
+</pre><hr/><h1 id="searching-ideas">Listing/searching ideas</h1><h2>Listing all ideas</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+        )
+
+)
+</pre><h2>Listing all ideas in 'ideas' discussion</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/discussions/ideas/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas containing the word 'test'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => test
+            [tags] => 
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas tagged with 'bananas'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => bananas
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas tagged with 'apples'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => apples
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+        )
+
+)
+</pre><h2>Searching for ideas tagged with 'bananas' and 'bees'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => bananas, bees
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas tagged with 'bananas' and 'apples'</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => bananas, apples
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by rating (lowest first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => rating
+            [order] => ascending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by rating (highest first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => rating
+            [order] => descending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by created date (oldest first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => created
+            [order] => ascending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by created date (newest first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => created
+            [order] => descending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by number of comments (fewest first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => comments
+            [order] => ascending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+        )
+
+)
+</pre><h2>Searching for ideas sorted by number of comments (most first)</h2><pre>Array
+(
+    [url] => http://127.0.0.1:20000/api/2.0/search
+    [method] => POST
+    [data] => Array
+        (
+            [text] => 
+            [tags] => 
+            [sort] => comments
+            [order] => descending
+        )
+
+    [response status] => 200
+    [response body] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [average_rating] => 3
+                    [ratings] => 1
+                    [state] => approved
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 3
+                    [id] => jesss-idea
+                    [comments] => 17
+                    [created] => 2014-02-19T17:35:37+00:00
+                )
+
+            [1] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => admin
+                    [title] => Great - it's working!
+                    [discussion] => ideas
+                    [tags] => 1
+                    [id] => it-worked
+                    [comments] => 1
+                    [created] => 2013-11-04T17:42:04+00:00
+                )
+
+            [2] => stdClass Object
+                (
+                    [average_rating] => 0
+                    [ratings] => 0
+                    [state] => new
+                    [author] => Jess
+                    [title] => Jess's idea
+                    [discussion] => ideas
+                    [tags] => 0
+                    [id] => jesss-idea-2
+                    [comments] => 0
+                    [created] => 2014-02-20T17:31:34+00:00
+                )
+
+        )
+
+)
+</pre>
