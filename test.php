@@ -200,12 +200,6 @@ print '<hr/><h1 id="more-ratings">More ratings</h1>';
 print_heading("Logging in user Bob");
 print_pre(login_user('Bob', '12345'));
 
-print_heading("Getting my own user profile");
-print_pre(get_user_profile('Bob'));
-
-print_heading("Getting somebody else's user profile");
-print_pre(get_user_profile('Jess'));
-
 print_heading("Attempting to rate Jess's idea with something invalid");
 print_pre(add_rating('ideas', 'jesss-idea', 'cheese'));
 

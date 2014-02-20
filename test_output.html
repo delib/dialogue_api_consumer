@@ -505,10 +505,109 @@ null
         (
         )
 
-    [response status] => 503
+    [response status] => 200
     [response body] => stdClass Object
         (
-            [message] => Internal server error
+            [properties] => stdClass Object
+                (
+                    [email] => jess@example.com
+                )
+
+            [comments] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [body] => I like bees
+                            [state] => new
+                            [created] => 2014-02-20T17:31:34.827518
+                            [id] => 1392917494827529
+                            [author] => Jess
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [body] => I don't like spiders
+                            [state] => new
+                            [created] => 2014-02-20T17:31:34.942672
+                            [id] => 1392917494942683
+                            [author] => Jess
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [body] => I like bees
+                            [state] => new
+                            [created] => 2014-02-19T19:15:33.365967
+                            [id] => 1392837333365978
+                            [author] => Jess
+                        )
+
+                    [3] => stdClass Object
+                        (
+                            [body] => I don't like spiders
+                            [state] => new
+                            [created] => 2014-02-19T19:15:33.597223
+                            [id] => 1392837333597235
+                            [author] => Jess
+                        )
+
+                    [4] => stdClass Object
+                        (
+                            [body] => 
+                            [state] => new
+                            [created] => 2014-02-19T19:15:33.688880
+                            [id] => 1392837333688890
+                            [author] => Jess
+                        )
+
+                )
+
+            [ideas] => Array
+                (
+                    [0] => stdClass Object
+                        (
+                            [average_rating] => 0
+                            [ratings] => 0
+                            [state] => new
+                            [author] => Jess
+                            [title] => Jess's idea
+                            [discussion] => ideas
+                            [tags] => 0
+                            [id] => jesss-idea-2
+                            [comments] => 0
+                            [created] => 2014-02-20T17:31:34+00:00
+                        )
+
+                    [1] => stdClass Object
+                        (
+                            [average_rating] => 3
+                            [ratings] => 1
+                            [state] => approved
+                            [author] => Jess
+                            [title] => Jess's idea
+                            [discussion] => ideas
+                            [tags] => 3
+                            [id] => jesss-idea
+                            [comments] => 17
+                            [created] => 2014-02-19T17:35:37+00:00
+                        )
+
+                    [2] => stdClass Object
+                        (
+                            [average_rating] => 2
+                            [ratings] => 1
+                            [state] => rejected
+                            [author] => Jess
+                            [title] => Jess's idea
+                            [discussion] => ideas
+                            [tags] => 0
+                            [id] => jesss-idea-1
+                            [comments] => 0
+                            [created] => 2014-02-19T17:49:56+00:00
+                        )
+
+                )
+
         )
 
 )
@@ -835,48 +934,6 @@ X-Varnish-Age: 0
 Age: 0
 
 null
-)
-</pre><h2>Getting my own user profile</h2><pre>Array
-(
-    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Bob?
-    [method] => GET
-    [data] => Array
-        (
-        )
-
-    [response status] => 200
-    [response body] => stdClass Object
-        (
-            [properties] => stdClass Object
-                (
-                    [email] => bob@example.com
-                )
-
-            [comments] => Array
-                (
-                )
-
-            [ideas] => Array
-                (
-                )
-
-        )
-
-)
-</pre><h2>Getting somebody else's user profile</h2><pre>Array
-(
-    [url] => http://127.0.0.1:20000/api/2.0/users/profiles/Jess?
-    [method] => GET
-    [data] => Array
-        (
-        )
-
-    [response status] => 503
-    [response body] => stdClass Object
-        (
-            [message] => Internal server error
-        )
-
 )
 </pre><h2>Attempting to rate Jess's idea with something invalid</h2><pre>Array
 (
