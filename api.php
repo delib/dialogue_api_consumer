@@ -26,7 +26,7 @@ $COOKIE_JAR = "/tmp/cookiejar";
 
 // GET/POST request.
 // I don't know if this is the best way to do it; I got it from stackoverflow :/
-// Returns she requested URL and request method and parameters, and the
+// Returns the requested URL and request method and parameters, and the
 // resulting HTTP status code and the decoded JSON object, if there is one.
 // if $raw_response is True, returns http response headers as well.
 // Most of this output is just for testing/illustration.
