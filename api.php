@@ -20,6 +20,9 @@ $API_BASE = "http://127.0.0.1:20000/api/2.0";
 // If anyone actually uses "fishes" in production it will be a sad day.
 $API_SECRET = "fishes";
 
+// This stores the auth cookie for the user on whose behalf the API
+// is currently acting.  This is needed for the authenticated methods
+// eg creating ideas.
 // TODO: You'll need a separate cookiejar for each visitor.
 // Perhaps include PHP session ID in the filename to ensure it's unique?
 $COOKIE_JAR = "/tmp/cookiejar";  
