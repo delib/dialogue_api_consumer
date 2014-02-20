@@ -12,6 +12,7 @@ ini_set('display_errors', 1);
 session_start();
 
 // The url of the staging/live Dialogue App instance
+// Hit this URL in a browser for the latest API documentation
 $API_BASE = "http://127.0.0.1:20000/api/2.0";
 
 // Set up by Delib in the Dialogue App instance.  This is a secret.
